@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import {computed, ref} from "vue"
-import usePasswordGenerator from "./composables/usePasswordGenerator.ts";
+import { computed, onMounted, ref, watch } from 'vue';
+import usePasswordGenerator from './composables/usePasswordGenerator.ts';
+import { useI18n } from 'vue-i18n';
 
-const includesLetters = ref(true)
-const includesNumbers = ref(false)
-const includesUpperCases = ref(false)
-const includesSymbols = ref(false)
-const passwordLength = ref(8)
-const isCopyPasswordButtonDisabled = ref(false)
+const { t, locale } = useI18n();
+
+const includesLetters = ref(true);
+const includesNumbers = ref(false);
+const includesUpperCases = ref(false);
+const includesSymbols = ref(false);
+const passwordLength = ref(8);
+const isCopyPasswordButtonDisabled = ref(false);
 
 const { passwordGenerator } = usePasswordGenerator({
   includesNumbers,
@@ -15,80 +18,116 @@ const { passwordGenerator } = usePasswordGenerator({
   includesSymbols,
   includesUpperCases,
   passwordLength
-})
-
-const password = computed(() => {
-  try {
-    if (!passwordGenerator.value) return ''
-    return passwordGenerator.value.generatePassword()
-  } catch (err) {
-    return ""
-  }
-})
+});
 
 const errorMessage = computed(() => {
   try {
-    passwordGenerator.value?.generatePassword()
-    return ''
+    passwordGenerator.value?.generatePassword();
+    return '';
   } catch (err) {
-    return err instanceof Error ? err.message : 'Ошибка генерации'
+    return err instanceof Error ? err.message : 'Ошибка генерации';
   }
-})
+});
+
+const createNewPassword = () => {
+  try {
+    if (!passwordGenerator.value) return '';
+    return passwordGenerator.value.generatePassword();
+  } catch (err) {
+    return '';
+  }
+};
+
+const password = ref(createNewPassword());
 
 const copyPassword = async () => {
-  await navigator.clipboard.writeText(password.value)
-  const COPY_TIMEOUT_DELAY_IN_MILLISECONDS = 3_000
+  await navigator.clipboard.writeText(password.value);
+  const COPY_TIMEOUT_DELAY_IN_MILLISECONDS = 3_000;
 
-  isCopyPasswordButtonDisabled.value = true
+  isCopyPasswordButtonDisabled.value = true;
   setTimeout(() => {
-    isCopyPasswordButtonDisabled.value = false
-  }, COPY_TIMEOUT_DELAY_IN_MILLISECONDS)
-}
+    isCopyPasswordButtonDisabled.value = false;
+  }, COPY_TIMEOUT_DELAY_IN_MILLISECONDS);
+};
+
+const generateNewPassword = () => (password.value = createNewPassword());
+
+const isError = computed(() => errorMessage.value !== '');
 
 const copyPasswordButtonText = computed(() => {
   if (isCopyPasswordButtonDisabled.value) {
-    return "Password copied!"
+    return t('actions.copied');
   }
 
-  return "Copy password"
-})
+  return t('actions.copy');
+});
+
+watch(
+  [includesNumbers, includesLetters, includesSymbols, includesUpperCases, passwordLength],
+  generateNewPassword
+);
+
+onMounted(() => {
+  const savedLang = localStorage.getItem('minpasmen-preferred-language');
+  const browserLang = navigator.language.split('-')[0];
+
+  if (savedLang === 'ru' || savedLang === 'en') {
+    locale.value = savedLang;
+  } else if (browserLang === 'ru') {
+    locale.value = 'ru';
+  }
+});
+
+const switchLanguage = (event: Event) => {
+  const target = event.target as HTMLSelectElement;
+  const lang = target.value as 'en' | 'ru';
+  locale.value = lang;
+  localStorage.setItem('minpasmen-preferred-language', lang);
+};
 </script>
 
 <template>
   <main class="main__wrapper">
-    <h1 class="main__header">My password generator</h1>
+    <select :value="locale" @change="switchLanguage">
+      <option value="en">{{ t('languages.english') }}</option>
+      <option value="ru">{{ t('languages.russian') }}</option>
+    </select>
+    <h1 class="main__header">{{ t('app.title') }}</h1>
+    <p>{{ t('app.description') }}</p>
     <p v-if="password" class="password__block">{{ password }}</p>
     <h2 v-if="errorMessage" class="error__message">{{ errorMessage }}</h2>
     <fieldset class="filters">
-      <legend>Parameters</legend>
+      <legend>{{ t('passwordParameters.title') }}</legend>
       <ul class="filters__list">
         <li class="length__wrapper">
-        <input id="password--length" type="range" min="4" max="20" v-model="passwordLength">
-        <label for="password--length">Password length: {{ passwordLength }}</label>
-      </li>
-        <li class="filters__item">
-        <input type="checkbox" id="includes--letters" v-model="includesLetters"/>
-        <label for="includes--letters" >Use letters</label>
-      </li>
-        <li class="filters__item">
-        <input type="checkbox" id="includes--numbers" v-model="includesNumbers"/>
-        <label for="includes--numbers" >Use numbers</label>
-      </li>
-        <li class="filters__item">
-          <input type="checkbox" id="includes--symbols" v-model="includesSymbols"/>
-          <label for="includes--symbols" >Use symbols</label>
+          <input id="password--length" type="range" min="4" max="20" v-model="passwordLength" />
+          <label for="password--length"
+            >{{ t('passwordParameters.length') }} {{ passwordLength }}</label
+          >
         </li>
         <li class="filters__item">
-          <input type="checkbox" id="includes--uppercases" v-model="includesUpperCases"/>
-          <label for="includes--uppercases" >Use uppercases</label>
+          <input type="checkbox" id="includes--letters" v-model="includesLetters" />
+          <label for="includes--letters">{{ t('passwordParameters.letters') }}</label>
+        </li>
+        <li class="filters__item">
+          <input type="checkbox" id="includes--numbers" v-model="includesNumbers" />
+          <label for="includes--numbers">{{ t('passwordParameters.numbers') }}</label>
+        </li>
+        <li class="filters__item">
+          <input type="checkbox" id="includes--symbols" v-model="includesSymbols" />
+          <label for="includes--symbols">{{ t('passwordParameters.symbols') }}</label>
+        </li>
+        <li class="filters__item">
+          <input type="checkbox" id="includes--uppercases" v-model="includesUpperCases" />
+          <label for="includes--uppercases">{{ t('passwordParameters.uppercase') }}</label>
         </li>
       </ul>
     </fieldset>
-    <button
-      class="app__button"
-      :disabled="isCopyPasswordButtonDisabled"
-      @click="copyPassword"
-    >
+    <button class="app__button" @click="generateNewPassword" v-if="!isError">
+      <span>{{ t('actions.generate') }}</span>
+      <img src="/images/icons/refresh.svg" alt="" class="button__icon" />
+    </button>
+    <button class="app__button" :disabled="isCopyPasswordButtonDisabled" @click="copyPassword">
       <span>{{ copyPasswordButtonText }}</span>
       <img
         v-show="!isCopyPasswordButtonDisabled"
@@ -122,7 +161,7 @@ const copyPasswordButtonText = computed(() => {
   width: min(100%, 600px);
 
   color: oklch(0.6 0 0);
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 1.5rem;
 }
 

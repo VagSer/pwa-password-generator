@@ -1,0 +1,29 @@
+{
+  "app": {
+    "title": "MinPasMan",
+    "tagline": "Minimal Password Manager",
+    "description": "Secure password manager"
+  },
+  "passwordParameters": {
+    "title": "Parameters",
+    "letters": "Letters",
+    "numbers": "Numbers",
+    "symbols": "Symbols",
+    "uppercase": "Uppercase",
+    "length": "Password Length:"
+  },
+  "actions": {
+    "generate": "Generate",
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "errors": {
+    "noSymbols": "No symbols selected for creating password",
+    "copyFailed": "Copy failed",
+    "generationFailed": "Password generation failed"
+  },
+  "languages": {
+    "english": "English",
+    "russian": "Russian"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "app": {
+    "title": "MinPasMan",
+    "tagline": "Minimal Password Manager",
+    "description": "Безопасный менеджер паролей"
+  },
+  "passwordParameters": {
+    "title": "Параметры",
+    "letters": "Буквы",
+    "numbers": "Цифры",
+    "symbols": "Специальные символы",
+    "uppercase": "Заглавные",
+    "length": "Длина пароля:"
+  },
+  "actions": {
+    "generate": "Сгенерировать",
+    "copy": "Копирровать",
+    "copied": "Скопировано"
+  },
+  "errors": {
+    "noSymbols": "Не из чего создать пароль",
+    "copyFailed": "Копирование не выполнено",
+    "generationFailed": "Генерация пароля не выполнена"
+  },
+  "languages": {
+    "english": "Английский",
+    "russian": "Русский"
+  }
+}

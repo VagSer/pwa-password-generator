@@ -18,7 +18,12 @@ export class Randomizer {
     return Math.random() < 0.5
   }
 
-  getRandomArrayElement(array: any[]) {
+
+  getRandomArrayElement<T>(array: T[]) {
+    if (array.length === 0) {
+      throw new Error("trying take random element from empty array")
+    }
+
     const randomIndex = this.getRandomIntegerFromMinToMax(0, array.length - 1)
 
     return array[randomIndex]

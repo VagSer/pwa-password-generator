@@ -43,7 +43,7 @@ export class PasswordGenerator {
         continue
       }
 
-      let isUpperCase = randomizer.getRandomBoolean()
+      const isUpperCase = randomizer.getRandomBoolean()
 
       if (!isUpperCase) {
         newPassword += newSymbol
