@@ -25,7 +25,15 @@ const errorMessage = computed(() => {
     passwordGenerator.value?.generatePassword();
     return '';
   } catch (err) {
-    return err instanceof Error ? err.message : 'Ошибка генерации';
+    const errorCode = err instanceof Error ? err.message : 'UNKNOWN_ERROR';
+
+    const errorMap: Record<string, string> = {
+      NO_SYMBOLS: t('errors.noSymbols'),
+      INVALID_LENGTH: t('errors.invalidLength'),
+      UNKNOWN_ERROR: t('errors.generationFailed')
+    };
+
+    return errorMap[errorCode] || errorMap.UNKNOWN_ERROR;
   }
 });
 
@@ -91,6 +99,7 @@ const switchLanguage = (event: Event) => {
     <select :value="locale" @change="switchLanguage">
       <option value="en">{{ t('languages.english') }}</option>
       <option value="ru">{{ t('languages.russian') }}</option>
+      <option value="zh-CN">{{ t('languages.chinese') }}</option>
     </select>
     <h1 class="main__header">{{ t('app.title') }}</h1>
     <p>{{ t('app.description') }}</p>

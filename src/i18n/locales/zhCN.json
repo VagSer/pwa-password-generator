@@ -1,0 +1,30 @@
+{
+  "app": {
+    "title": "MinPasMan",
+    "tagline": "最小密码管理器",
+    "description": "安全密码管理器"
+  },
+  "passwordParameters": {
+    "title": "参数",
+    "letters": "字母",
+    "numbers": "数字",
+    "symbols": "符号",
+    "uppercase": "大写字母",
+    "length": "密码长度:"
+  },
+  "actions": {
+    "generate": "生成",
+    "copy": "复制",
+    "copied": "已复制"
+  },
+  "errors": {
+    "noSymbols": "未选择密码字符类型",
+    "copyFailed": "复制失败",
+    "generationFailed": "密码生成失败"
+  },
+  "languages": {
+    "english": "英语",
+    "russian": "俄语",
+    "chinese": "中文"
+  }
+}
