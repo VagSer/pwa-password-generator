@@ -7,6 +7,7 @@ const includesNumbers = ref(false)
 const includesUpperCases = ref(false)
 const includesSymbols = ref(false)
 const passwordLength = ref(8)
+const isCopyPasswordButtonDisabled = ref(false)
 
 const { passwordGenerator } = usePasswordGenerator({
   includesNumbers,
@@ -32,6 +33,24 @@ const errorMessage = computed(() => {
   } catch (err) {
     return err instanceof Error ? err.message : 'Ошибка генерации'
   }
+})
+
+const copyPassword = async () => {
+  await navigator.clipboard.writeText(password.value)
+  const COPY_TIMEOUT_DELAY_IN_MILLISECONDS = 3_000
+
+  isCopyPasswordButtonDisabled.value = true
+  setTimeout(() => {
+    isCopyPasswordButtonDisabled.value = false
+  }, COPY_TIMEOUT_DELAY_IN_MILLISECONDS)
+}
+
+const copyPasswordButtonText = computed(() => {
+  if (isCopyPasswordButtonDisabled.value) {
+    return "Password copied!"
+  }
+
+  return "Copy password"
 })
 </script>
 
@@ -65,6 +84,19 @@ const errorMessage = computed(() => {
         </li>
       </ul>
     </fieldset>
+    <button
+      class="app__button"
+      :disabled="isCopyPasswordButtonDisabled"
+      @click="copyPassword"
+    >
+      <span>{{ copyPasswordButtonText }}</span>
+      <img
+        v-show="!isCopyPasswordButtonDisabled"
+        src="/images/icons/copy.svg"
+        alt=""
+        class="button__icon"
+      />
+    </button>
   </main>
 </template>
 
@@ -121,5 +153,17 @@ const errorMessage = computed(() => {
   padding: 40px;
 
   color: oklch(0.4 0.2 20);
+}
+
+.app__button {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.button__icon {
+  height: 1lh;
 }
 </style>
