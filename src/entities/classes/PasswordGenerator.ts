@@ -1,5 +1,6 @@
 import type { ReadonlyPasswordGeneratorParameters } from '../types/ReadonlyPasswordGeneratorParameters.ts';
 import { Randomizer } from './Randomizer.ts';
+import { PasswordGenerationErrorIds } from '../enums/PasswordGenerationErrorIds.ts';
 
 export class PasswordGenerator {
   private readonly includesNumbers: boolean;
@@ -7,11 +8,6 @@ export class PasswordGenerator {
   private readonly includesSymbols: boolean;
   private readonly includesUpperCases: boolean;
   private readonly passwordLength: number | string;
-
-  static readonly ERROR_CODES = {
-    NO_SYMBOLS: 'NO_SYMBOLS',
-    INVALID_LENGTH: 'INVALID_LENGTH'
-  } as const;
 
   constructor(parameters: ReadonlyPasswordGeneratorParameters) {
     this.includesNumbers = parameters.includesNumbers;
@@ -29,7 +25,7 @@ export class PasswordGenerator {
     if (this.includesNumbers) valuableSymbols += '0123456789';
 
     if (!valuableSymbols.length) {
-      throw new Error(PasswordGenerator.ERROR_CODES.NO_SYMBOLS);
+      throw new Error(PasswordGenerationErrorIds.NO_SYMBOLS);
     }
 
     return valuableSymbols;
@@ -47,7 +43,7 @@ export class PasswordGenerator {
         return;
       }
 
-      if (!this.includesUpperCases) {
+      if (!(this.includesUpperCases && this.includesLetters)) {
         newPassword += newSymbol;
         continue;
       }

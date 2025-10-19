@@ -20,11 +20,12 @@
   "errors": {
     "noSymbols": "Не из чего создать пароль",
     "copyFailed": "Копирование не выполнено",
-    "generationFailed": "Генерация пароля не выполнена"
+    "generationFailed": "Генерация пароля не выполнена",
+    "unknownError": "Неизвестная ошибка"
   },
   "languages": {
-    "english": "Английский",
-    "russian": "Русский",
-    "chinese": "Китайский"
+    "english": "Английский\uD83C\uDDFA\uD83C\uDDF8",
+    "russian": "Русский\uD83C\uDDF7\uD83C\uDDFA",
+    "chinese": "Китайский\uD83C\uDDE8\uD83C\uDDF3"
   }
 }

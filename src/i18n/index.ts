@@ -5,8 +5,8 @@ import zhCN from './locales/zhCN.json';
 
 export default createI18n({
   legacy: false,
-  locale: 'en',
-  fallbackLocale: 'en',
+  locale: localStorage.getItem('minpasmen-preferred-language') ?? 'en',
+  fallbackLocale: localStorage.getItem('minpasmen-preferred-language') ?? 'en',
   messages: {
     en,
     ru,

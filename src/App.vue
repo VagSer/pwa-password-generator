@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import usePasswordGenerator from './composables/usePasswordGenerator.ts';
 import { useI18n } from 'vue-i18n';
+import { PasswordGenerationErrorIds } from './entities/enums/PasswordGenerationErrorIds.ts';
 
 const { t, locale } = useI18n();
 
@@ -25,15 +26,22 @@ const errorMessage = computed(() => {
     passwordGenerator.value?.generatePassword();
     return '';
   } catch (err) {
-    const errorCode = err instanceof Error ? err.message : 'UNKNOWN_ERROR';
+    const errorId = err instanceof Error ? err.message : PasswordGenerationErrorIds.UNKNOWN_ERROR;
 
-    const errorMap: Record<string, string> = {
-      NO_SYMBOLS: t('errors.noSymbols'),
-      INVALID_LENGTH: t('errors.invalidLength'),
-      UNKNOWN_ERROR: t('errors.generationFailed')
-    };
+    const errorMessagesByErrorId = new Map<PasswordGenerationErrorIds, string>([
+      [PasswordGenerationErrorIds.NO_SYMBOLS, t('errors.noSymbols')],
+      [PasswordGenerationErrorIds.COPY_FAILED, t('errors.copyFailed')],
+      [PasswordGenerationErrorIds.GENERATION_FAILED, t('errors.generationFailed')],
+      [PasswordGenerationErrorIds.UNKNOWN_ERROR, t('errors.unknownError')]
+    ]);
 
-    return errorMap[errorCode] || errorMap.UNKNOWN_ERROR;
+    const normalizedCode = Object.values(PasswordGenerationErrorIds).includes(
+      errorId as PasswordGenerationErrorIds
+    )
+      ? (errorId as PasswordGenerationErrorIds)
+      : PasswordGenerationErrorIds.UNKNOWN_ERROR;
+
+    return errorMessagesByErrorId.get(normalizedCode) || t('errors.unknownError');
   }
 });
 
@@ -49,6 +57,8 @@ const createNewPassword = () => {
 const password = ref(createNewPassword());
 
 const copyPassword = async () => {
+  if (!password.value) return;
+
   await navigator.clipboard.writeText(password.value);
   const COPY_TIMEOUT_DELAY_IN_MILLISECONDS = 3_000;
 
@@ -127,7 +137,12 @@ const switchLanguage = (event: Event) => {
           <label for="includes--symbols">{{ t('passwordParameters.symbols') }}</label>
         </li>
         <li class="filters__item">
-          <input type="checkbox" id="includes--uppercases" v-model="includesUpperCases" />
+          <input
+            type="checkbox"
+            id="includes--uppercases"
+            v-model="includesUpperCases"
+            :disabled="!includesLetters"
+          />
           <label for="includes--uppercases">{{ t('passwordParameters.uppercase') }}</label>
         </li>
       </ul>
