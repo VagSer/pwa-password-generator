@@ -23,9 +23,15 @@
     "generationFailed": "密码生成失败",
     "unknownError": "未知错误"
   },
+  "pro": {
+    "proModeCheckbox": "专业模式",
+    "minNumbers": "最少数字",
+    "minSymbols": "最少符号",
+    "minUppercase": "最少大写字母"
+  },
   "languages": {
-    "english": "英语\uD83C\uDDFA\uD83C\uDDF8",
-    "russian": "俄语\uD83C\uDDF7\uD83C\uDDFA",
-    "chinese": "中文\uD83C\uDDE8\uD83C\uDDF3"
+    "english": "\uD83C\uDDFA\uD83C\uDDF8 英语",
+    "russian": "\uD83C\uDDF7\uD83C\uDDFA 俄语",
+    "chinese": "\uD83C\uDDE8\uD83C\uDDF3 中文"
   }
 }

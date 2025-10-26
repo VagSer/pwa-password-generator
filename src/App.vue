@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, type Ref, ref, watch } from 'vue';
 import usePasswordGenerator from './composables/usePasswordGenerator.ts';
 import { useI18n } from 'vue-i18n';
 import { PasswordGenerationErrorIds } from './entities/enums/PasswordGenerationErrorIds.ts';
+import type { PasswordRequirements } from './entities/interfaces/PasswordRequirements.ts';
 
 const { t, locale } = useI18n();
+
+const MIN_PASSWORD_LENGTH = 4;
+const MAX_PASSWORD_LENGTH = 30;
 
 const includesLetters = ref(true);
 const includesNumbers = ref(false);
@@ -13,12 +17,20 @@ const includesSymbols = ref(false);
 const passwordLength = ref(8);
 const isCopyPasswordButtonDisabled = ref(false);
 
+const isProModeActive = ref(true);
+const passwordRequirements: Ref<PasswordRequirements> = ref({
+  minNumbers: 1,
+  minSymbols: 1,
+  minUppercases: 1
+});
+
 const { passwordGenerator } = usePasswordGenerator({
   includesNumbers,
   includesLetters,
   includesSymbols,
   includesUpperCases,
-  passwordLength
+  passwordLength,
+  passwordRequirements
 });
 
 const errorMessage = computed(() => {
@@ -48,6 +60,10 @@ const errorMessage = computed(() => {
 const createNewPassword = () => {
   try {
     if (!passwordGenerator.value) return '';
+    if (isProModeActive.value) {
+      return passwordGenerator.value.generatePasswordWithRequirements();
+    }
+
     return passwordGenerator.value.generatePassword();
   } catch (err) {
     return '';
@@ -81,8 +97,17 @@ const copyPasswordButtonText = computed(() => {
 });
 
 watch(
-  [includesNumbers, includesLetters, includesSymbols, includesUpperCases, passwordLength],
-  generateNewPassword
+  [
+    includesNumbers,
+    includesLetters,
+    includesSymbols,
+    includesUpperCases,
+    passwordLength,
+    isProModeActive,
+    passwordRequirements
+  ],
+  generateNewPassword,
+  { deep: true }
 );
 
 onMounted(() => {
@@ -119,7 +144,13 @@ const switchLanguage = (event: Event) => {
       <legend>{{ t('passwordParameters.title') }}</legend>
       <ul class="filters__list">
         <li class="length__wrapper">
-          <input id="password--length" type="range" min="4" max="20" v-model="passwordLength" />
+          <input
+            id="password--length"
+            type="range"
+            :min="MIN_PASSWORD_LENGTH"
+            :max="MAX_PASSWORD_LENGTH"
+            v-model="passwordLength"
+          />
           <label for="password--length"
             >{{ t('passwordParameters.length') }} {{ passwordLength }}</label
           >
@@ -144,6 +175,51 @@ const switchLanguage = (event: Event) => {
             :disabled="!includesLetters"
           />
           <label for="includes--uppercases">{{ t('passwordParameters.uppercase') }}</label>
+        </li>
+        <li class="filters__item">
+          <input type="checkbox" id="pro--mode--toggle" v-model="isProModeActive" />
+          <label for="pro--mode--toggle">{{ t('pro.proModeCheckbox') }}</label>
+        </li>
+      </ul>
+      <ul class="filters__list" v-if="isProModeActive">
+        <li class="filters__item">
+          <input
+            type="number"
+            id="minimum--numbers"
+            v-model="passwordRequirements.minNumbers"
+            min="1"
+            :max="MAX_PASSWORD_LENGTH"
+            :disabled="!includesNumbers"
+            autocomplete="new-password"
+            inputmode="numeric"
+          />
+          <label for="minimum--numbers">{{ t('pro.minNumbers') }}</label>
+        </li>
+        <li class="filters__item">
+          <input
+            type="number"
+            id="minimum--symbols"
+            v-model="passwordRequirements.minSymbols"
+            min="1"
+            :max="MAX_PASSWORD_LENGTH"
+            :disabled="!includesSymbols"
+            autocomplete="new-password"
+            inputmode="numeric"
+          />
+          <label for="minimum--symbols">{{ t('pro.minSymbols') }}</label>
+        </li>
+        <li class="filters__item">
+          <input
+            type="number"
+            id="minimum--uppercases"
+            v-model="passwordRequirements.minUppercases"
+            min="1"
+            :max="MAX_PASSWORD_LENGTH"
+            :disabled="!(includesLetters && includesUpperCases)"
+            autocomplete="new-password"
+            inputmode="numeric"
+          />
+          <label for="minimum--uppercases">{{ t('pro.minUppercase') }}</label>
         </li>
       </ul>
     </fieldset>

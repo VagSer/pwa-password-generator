@@ -23,9 +23,15 @@
     "generationFailed": "Генерация пароля не выполнена",
     "unknownError": "Неизвестная ошибка"
   },
+  "pro": {
+    "proModeCheckbox": "Режим ПРО",
+    "minNumbers": "Минимум цифр",
+    "minSymbols": "Минимум символов",
+    "minUppercase": "Минимум заглавных"
+  },
   "languages": {
-    "english": "Английский\uD83C\uDDFA\uD83C\uDDF8",
-    "russian": "Русский\uD83C\uDDF7\uD83C\uDDFA",
-    "chinese": "Китайский\uD83C\uDDE8\uD83C\uDDF3"
+    "english": "\uD83C\uDDFA\uD83C\uDDF8 Английский",
+    "russian": "\uD83C\uDDF7\uD83C\uDDFA Русский",
+    "chinese": "\uD83C\uDDE8\uD83C\uDDF3 Китайский"
   }
 }

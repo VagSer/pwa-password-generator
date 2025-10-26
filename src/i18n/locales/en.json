@@ -23,9 +23,15 @@
     "generationFailed": "Password generation failed",
     "unknownError": "Unknown error"
   },
+  "pro": {
+    "proModeCheckbox": "PRO mode",
+    "minNumbers": "Minimum numbers",
+    "minSymbols": "Minimum symbols",
+    "minUppercase": "Minimum uppercase"
+  },
   "languages": {
-    "english": "English\uD83C\uDDFA\uD83C\uDDF8",
-    "russian": "Russian\uD83C\uDDF7\uD83C\uDDFA",
-    "chinese": "Chinese\uD83C\uDDE8\uD83C\uDDF3"
+    "english": "\uD83C\uDDFA\uD83C\uDDF8 English",
+    "russian": "\uD83C\uDDF7\uD83C\uDDFA Russian",
+    "chinese": "\uD83C\uDDE8\uD83C\uDDF3 Chinese"
   }
 }
